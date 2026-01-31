@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Manutenção Escolar</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.5;
+            font-size: 16px;
+        }
+
+        /* Header fixo */
+        .app-header {
+            background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+            color: white;
+            padding: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            height: 60px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* Conteúdo principal */
+        .main-content {
+            padding: 70px 0 70px 0;
+            min-height: 100vh;
+        }
+
+        /* Seções */
+        .section {
+            display: none;
+            padding: 16px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* Card de formulário */
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Formulário */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .form-label .optional {
+            color: #666;
+            font-weight: normal;
+            font-size: 0.85rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Grupo de radio */
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .radio-option {
+            position: relative;
+        }
+
+        .radio-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-label {
+            display: block;
+            padding: 14px;
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radio-input:checked + .radio-label {
+            background: #e8f0fe;
+            border-color: #1a73e8;
+            color: #1a73e8;
+        }
+
+        /* Upload de foto */
+        .photo-upload {
+            border: 3px dashed #dadce0;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+
+        .photo-upload:hover {
+            border-color: #1a73e8;
+            background: #f0f7ff;
+        }
+
+        .photo-icon {
+            font-size: 2.5rem;
+            color: #5f6368;
+            margin-bottom: 10px;
+        }
+
+        .photo-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 15px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        /* Botões principais */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0d62d9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #34a853;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2d9248;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #ea4335;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d33426;
+            transform: translateY(-2px);
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: white;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1da851;
+            transform: translateY(-2px);
+        }
+
+        /* Lista de solicitações */
+        .requests-list {
+            margin-top: 20px;
+        }
+
+        .request-card {
+            background: white;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border-left: 4px solid #1a73e8;
+        }
+
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .request-title {
+            font-weight: 600;
+            color: #1a73e8;
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .request-date {
+            font-size: 0.8rem;
+            color: #666;
+            background: #f1f3f4;
+            padding: 4px 10px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .request-info {
+            margin-bottom: 10px;
+        }
+
+        .request-desc {
+            font-size: 0.95rem;
+            color: #444;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .request-patrimony {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .request-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .request-author {
+            font-size: 0.85rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        .request-photo-badge {
+            font-size: 0.85rem;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Estado vazio */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-icon {
+            font-size: 3.5rem;
+            color: #dadce0;
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            padding: 20px;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: #1a73e8;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-actions {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Navegação inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 10px 5px;
+            flex: 1;
+            transition: all 0.3s;
+        }
+
+        .nav-item.active {
+            color: #1a73e8;
+        }
+
+        .nav-icon {
+            font-size: 1.3rem;
+        }
+
+        .nav-text {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Notificações */
+        .notification {
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            z-index: 3000;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .notification.success {
+            background: #34a853;
+        }
+
+        .notification.error {
+            background: #ea4335;
+        }
+
+        .notification.info {
+            background: #1a73e8;
+        }
+
+        /* Animações */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from { transform: translate(-50%, -30px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        /* Responsividade */
+        @media (max-width: 380px) {
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                gap: 10px;
+            }
+            
+            .app-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .main-content {
+                max-width: 768px;
+                margin: 0 auto;
+            }
+            
+            .action-buttons {
+                flex-direction: row;
+            }
+            
+            .btn {
+                flex: 1;
+            }
+        }
+
+        /* Status indicators */
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .status-pendente {
+            background: #fef7e0;
+            color: #f9a825;
+        }
+
+        .status-andamento {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+
+        .status-concluido {
+            background: #e6f4ea;
+            color: #34a853;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">Manutenção Escolar</h1>
+            <div class="header-actions">
+                <button class="header-btn" id="backupBtn" title="Backup">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="header-btn" id="helpBtn" title="Ajuda">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-content">
+        <!-- Seção Nova Solicitação -->
+        <section id="novaSolicitacao" class="section active">
+            <div class="form-card">
+                <h2 class="card-title">
+                    <i class="fas fa-plus-circle"></i> Nova Solicitação
+                </h2>
+                
+                <form id="maintenanceForm">
+                    <div class="form-group">
+                        <label class="form-label">Data</label>
+                        <input type="date" class="form-input" id="data" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Local do Problema</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="sala" name="local" value="Sala de Aula" class="radio-input" checked>
+                                <label for="sala" class="radio-label">Sala</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="andar" name="local" value="Andar/Corredor" class="radio-input">
+                                <label for="andar" class="radio-label">Andar</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="masculino" name="local" value="Banheiro Masculino" class="radio-input">
+                                <label for="masculino" class="radio-label">Banheiro Masc.</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="feminino" name="local" value="Banheiro Feminino" class="radio-input">
+                                <label for="feminino" class="radio-label">Banheiro Fem.</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Número/Localização Específica</label>
+                        <input type="text" class="form-input" id="localizacao" placeholder="Ex: Sala 12, 2º Andar">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Número de Patrimônio <span class="optional">(opcional)</span></label>
+                        <input type="text" class="form-input" id="patrimonio" placeholder="Ex: PAT-2023-001">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Descrição do Problema</label>
+                        <textarea class="form-textarea" id="descricao" placeholder="Descreva detalhadamente o problema..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Foto do Problema <span class="optional">(opcional)</span></label>
+                        <div class="photo-upload" id="uploadArea">
+                            <div class="photo-icon">
+                                <i class="fas fa-camera"></i>
+                            </div>
+                            <p>Toque para adicionar uma foto</p>
+                            <input type="file" id="foto" accept="image/*" style="display: none;">
+                            <img id="fotoPreview" class="photo-preview" alt="Pré-visualização">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Solicitante</label>
+                        <input type="text" class="form-input" id="solicitante" placeholder="Seu nome e função" required>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salvar Solicitação
+                        </button>
+                        <button type="button" class="btn btn-whatsapp" id="enviarWhatsApp">
+                            <i class="fab fa-whatsapp"></i> Salvar e Enviar WhatsApp
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Seção Solicitações -->
+        <section id="solicitacoes" class="section">
+            <div class="form-card">
+                <h2 class="card-title">
+                    <i class="fas fa-history"></i> Minhas Solicitações
+                    <span id="contadorSolicitacoes" style="margin-left: auto; font-size: 0.9rem; color: #666;">0 solicitações</span>
+                </h2>
+                
+                <div id="listaSolicitacoes" class="requests-list">
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-inbox"></i>
+                        </div>
+                        <p class="empty-text">Nenhuma solicitação encontrada</p>
+                        <p class="empty-text" style="font-size: 0.9rem; margin-top: 10px;">Crie sua primeira solicitação</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção Configurações -->
+        <section id="configuracoes" class="section">
+            <div class="form-card">
+                <h2 class="card-title">
+                    <i class="fas fa-cog"></i> Configurações
+                </h2>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="exportarBackup">
+                        <i class="fas fa-file-export"></i> Exportar Backup
+                    </button>
+                    <button class="btn btn-success" id="importarBackup">
+                        <i class="fas fa-file-import"></i> Importar Backup
+                    </button>
+                    <button class="btn btn-danger" id="limparDados">
+                        <i class="fas fa-trash"></i> Limpar Todos os Dados
+                    </button>
+                </div>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #1a73e8; margin-bottom: 15px; font-size: 1rem;">
+                        <i class="fas fa-info-circle"></i> Informações
+                    </h3>
+                    <p style="color: #666; font-size: 0.9rem; line-height: 1.6;">
+                        • Os dados são salvos automaticamente no seu dispositivo<br>
+                        • Use o backup para transferir dados entre dispositivos<br>
+                        • Para restaurar, importe o arquivo de backup<br>
+                        • O sistema funciona offline
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal de Detalhes -->
+    <div class="modal" id="modalDetalhes">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes da Solicitação</h3>
+                <button class="modal-close" id="fecharModal">&times;</button>
+            </div>
+            <div class="modal-body" id="conteudoModal"></div>
+            <div class="modal-actions">
+                <button class="btn btn-whatsapp" id="whatsappModal">
+                    <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                </button>
+                <button class="btn btn-primary" id="editarModal">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-danger" id="excluirModal">
+                    <i class="fas fa-trash"></i> Excluir
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navegação Inferior -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" data-section="novaSolicitacao">
+            <i class="fas fa-plus-circle nav-icon"></i>
+            <span class="nav-text">Nova</span>
+        </button>
+        <button class="nav-item" data-section="solicitacoes">
+            <i class="fas fa-list nav-icon"></i>
+            <span class="nav-text">Solicitações</span>
+        </button>
+        <button class="nav-item" data-section="configuracoes">
+            <i class="fas fa-cog nav-icon"></i>
+            <span class="nav-text">Configurações</span>
+        </button>
+    </nav>
+
+    <script>
+        // Sistema de armazenamento e backup
+        class SistemaManutencao {
+            constructor() {
+                this.solicitacoes = this.carregarDados();
+                this.solicitacaoAtual = null;
+                this.iniciarBackupAutomatico();
+            }
+
+            carregarDados() {
+                const dados = localStorage.getItem('solicitacoesManutencao');
+                return dados ? JSON.parse(dados) : [];
+            }
+
+            salvarDados() {
+                localStorage.setItem('solicitacoesManutencao', JSON.stringify(this.solicitacoes));
+                this.mostrarNotificacao('Dados salvos automaticamente', 'success');
+            }
+
+            iniciarBackupAutomatico() {
+                // Salva automaticamente a cada 30 segundos
+                setInterval(() => {
+                    if (this.solicitacoes.length > 0) {
+                        this.salvarDados();
+                    }
+                }, 30000);
+            }
+
+            exportarBackup() {
+                const dados = JSON.stringify(this.solicitacoes, null, 2);
+                const blob = new Blob([dados], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup-manutencao-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.mostrarNotificacao('Backup exportado com sucesso', 'success');
+            }
+
+            importarBackup(arquivo) {
+                const leitor = new FileReader();
+                
+                leitor.onload = (e) => {
+                    try {
+                        const dados = JSON.parse(e.target.result);
+                        if (Array.isArray(dados)) {
+                            this.solicitacoes = dados;
+                            this.salvarDados();
+                            this.atualizarListaSolicitacoes();
+                            this.mostrarNotificacao('Backup importado com sucesso', 'success');
+                        } else {
+                            throw new Error('Formato inválido');
+                        }
+                    } catch (erro) {
+                        this.mostrarNotificacao('Erro ao importar backup. Arquivo inválido.', 'error');
+                    }
+                };
+                
+                leitor.readAsText(arquivo);
+            }
+
+            limparDados() {
+                if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                    this.solicitacoes = [];
+                    localStorage.removeItem('solicitacoesManutencao');
+                    this.atualizarListaSolicitacoes();
+                    this.mostrarNotificacao('Todos os dados foram limpos', 'info');
+                }
+            }
+
+            mostrarNotificacao(mensagem, tipo) {
+                // Remover notificação anterior
+                const notificacaoAnterior = document.querySelector('.notification');
+                if (notificacaoAnterior) {
+                    notificacaoAnterior.remove();
+                }
+
+                // Criar nova notificação
+                const notificacao = document.createElement('div');
+                notificacao.className = `notification ${tipo}`;
+                notificacao.textContent = mensagem;
+                document.body.appendChild(notificacao);
+
+                // Remover após 3 segundos
+                setTimeout(() => {
+                    if (notificacao.parentNode) {
+                        notificacao.remove();
+                    }
+                }, 3000);
+            }
+        }
+
+        // Aplicação principal
+        class AplicacaoManutencao {
+            constructor() {
+                this.sistema = new SistemaManutencao();
+                this.inicializar();
+            }
+
+            inicializar() {
+                // Configurar data atual
+                const hoje = new Date().toISOString().split('T')[0];
+                document.getElementById('data').value = hoje;
+
+                // Configurar navegação
+                this.configurarNavegacao();
+
+                // Configurar formulário
+                this.configurarFormulario();
+
+                // Configurar upload de foto
+                this.configurarUploadFoto();
+
+                // Configurar botões de ação
+                this.configurarBotoesAcao();
+
+                // Configurar modal
+                this.configurarModal();
+
+                // Carregar dados iniciais
+                this.atualizarListaSolicitacoes();
+            }
+
+            configurarNavegacao() {
+                const itensNav = document.querySelectorAll('.nav-item');
+                
+                itensNav.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const sectionId = e.currentTarget.getAttribute('data-section');
+                        
+                        // Atualizar navegação ativa
+                        itensNav.forEach(nav => nav.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        
+                        // Mostrar seção correspondente
+                        document.querySelectorAll('.section').forEach(sec => {
+                            sec.classList.remove('active');
+                        });
+                        document.getElementById(sectionId).classList.add('active');
+                    });
+                });
+            }
+
+            configurarFormulario() {
+                const formulario = document.getElementById('maintenanceForm');
+                
+                formulario.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.salvarSolicitacao();
+                });
+
+                // Botão salvar e enviar WhatsApp
+                document.getElementById('enviarWhatsApp').addEventListener('click', () => {
+                    if (this.salvarSolicitacao()) {
+                        setTimeout(() => {
+                            const ultimaSolicitacao = this.sistema.solicitacoes[this.sistema.solicitacoes.length - 1];
+                            this.enviarWhatsApp(ultimaSolicitacao);
+                        }, 500);
+                    }
+                });
+            }
+
+            salvarSolicitacao() {
+                // Coletar dados do formulário
+                const dados = {
+                    id: Date.now(),
+                    data: document.getElementById('data').value,
+                    local: document.querySelector('input[name="local"]:checked').value,
+                    localizacao: document.getElementById('localizacao').value,
+                    patrimonio: document.getElementById('patrimonio').value,
+                    descricao: document.getElementById('descricao').value,
+                    foto: document.getElementById('fotoPreview').src || '',
+                    solicitante: document.getElementById('solicitante').value,
+                    status: 'pendente',
+                    dataCriacao: new Date().toISOString()
+                };
+
+                // Validar dados obrigatórios
+                if (!dados.descricao || !dados.solicitante) {
+                    this.sistema.mostrarNotificacao('Preencha todos os campos obrigatórios', 'error');
+                    return false;
+                }
+
+                // Adicionar à lista
+                this.sistema.solicitacoes.unshift(dados);
+                
+                // Salvar no sistema
+                this.sistema.salvarDados();
+                
+                // Limpar formulário
+                this.limparFormulario();
+                
+                // Atualizar lista
+                this.atualizarListaSolicitacoes();
+                
+                // Navegar para a lista
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                document.querySelector('[data-section="solicitacoes"]').classList.add('active');
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById('solicitacoes').classList.add('active');
+                
+                return true;
+            }
+
+            limparFormulario() {
+                document.getElementById('maintenanceForm').reset();
+                document.getElementById('fotoPreview').style.display = 'none';
+                document.getElementById('fotoPreview').src = '';
+                document.getElementById('data').value = new Date().toISOString().split('T')[0];
+                document.getElementById('sala').checked = true;
+            }
+
+            configurarUploadFoto() {
+                const uploadArea = document.getElementById('uploadArea');
+                const inputFoto = document.getElementById('foto');
+                const preview = document.getElementById('fotoPreview');
+
+                uploadArea.addEventListener('click', () => inputFoto.click());
+
+                inputFoto.addEventListener('change', (e) => {
+                    const arquivo = e.target.files[0];
+                    if (arquivo) {
+                        const leitor = new FileReader();
+                        leitor.onload = (evento) => {
+                            preview.src = evento.target.result;
+                            preview.style.display = 'block';
+                        };
+                        leitor.readAsDataURL(arquivo);
+                    }
+                });
+            }
+
+            configurarBotoesAcao() {
+                // Backup automático do header
+                document.getElementById('backupBtn').addEventListener('click', () => {
+                    this.sistema.exportarBackup();
+                });
+
+                // Ajuda
+                document.getElementById('helpBtn').addEventListener('click', () => {
+                    alert('📋 AJUDA\n\n1. Preencha o formulário com os dados da manutenção\n2. Adicione foto se necessário\n3. Clique em "Salvar Solicitação"\n4. Toque em uma solicitação para ver detalhes\n5. Use o botão WhatsApp para enviar ao responsável\n\n💾 Os dados são salvos automaticamente!');
+                });
+
+                // Configurações
+                document.getElementById('exportarBackup').addEventListener('click', () => {
+                    this.sistema.exportarBackup();
+                });
+
+                document.getElementById('importarBackup').addEventListener('click', () => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = '.json';
+                    input.onchange = (e) => {
+                        if (e.target.files[0]) {
+                            this.sistema.importarBackup(e.target.files[0]);
+                        }
+                    };
+                    input.click();
+                });
+
+                document.getElementById('limparDados').addEventListener('click', () => {
+                    this.sistema.limparDados();
+                });
+            }
+
+            configurarModal() {
+                const modal = document.getElementById('modalDetalhes');
+                const fecharBtn = document.getElementById('fecharModal');
+                const whatsappBtn = document.getElementById('whatsappModal');
+                const editarBtn = document.getElementById('editarModal');
+                const excluirBtn = document.getElementById('excluirModal');
+
+                // Fechar modal
+                fecharBtn.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                });
+
+                // Fechar ao clicar fora
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+
+                // Enviar WhatsApp
+                whatsappBtn.addEventListener('click', () => {
+                    if (this.sistema.solicitacaoAtual) {
+                        this.enviarWhatsApp(this.sistema.solicitacaoAtual);
+                    }
+                });
+
+                // Editar solicitação
+                editarBtn.addEventListener('click', () => {
+                    if (this.sistema.solicitacaoAtual) {
+                        this.carregarParaEdicao(this.sistema.solicitacaoAtual);
+                        modal.classList.remove('active');
+                    }
+                });
+
+                // Excluir solicitação
+                excluirBtn.addEventListener('click', () => {
+                    if (this.sistema.solicitacaoAtual && confirm('Tem certeza que deseja excluir esta solicitação?')) {
+                        const index = this.sistema.solicitacoes.findIndex(s => s.id === this.sistema.solicitacaoAtual.id);
+                        if (index !== -1) {
+                            this.sistema.solicitacoes.splice(index, 1);
+                            this.sistema.salvarDados();
+                            this.atualizarListaSolicitacoes();
+                            modal.classList.remove('active');
+                            this.sistema.mostrarNotificacao('Solicitação excluída', 'success');
+                        }
+                    }
+                });
+            }
+
+            mostrarDetalhesSolicitacao(solicitacao) {
+                this.sistema.solicitacaoAtual = solicitacao;
+                
+                const conteudo = document.getElementById('conteudoModal');
+                const statusClass = `status-${solicitacao.status}`;
+                
+                conteudo.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <strong>Data:</strong>
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                            ${new Date(solicitacao.data).toLocaleDateString('pt-BR')}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <strong>Local:</strong>
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                            ${solicitacao.local} ${solicitacao.localizacao ? `- ${solicitacao.localizacao}` : ''}
+                        </div>
+                    </div>
+                    
+                    ${solicitacao.patrimonio ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong>Patrimônio:</strong>
+                            <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                                ${solicitacao.patrimonio}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div style="margin-bottom: 20px;">
+                        <strong>Descrição:</strong>
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px; white-space: pre-wrap;">
+                            ${solicitacao.descricao}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <strong>Solicitante:</strong>
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                            ${solicitacao.solicitante}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 20px;">
+                        <strong>Status:</strong>
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 8px; margin-top: 5px;">
+                            <span class="status-badge ${statusClass}">
+                                ${solicitacao.status.charAt(0).toUpperCase() + solicitacao.status.slice(1)}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    ${solicitacao.foto ? `
+                        <div style="margin-bottom: 20px;">
+                            <strong>Foto:</strong>
+                            <div style="margin-top: 5px;">
+                                <img src="${solicitacao.foto}" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">
+                            </div>
+                        </div>
+                    ` : ''}
+                `;
+                
+                document.getElementById('modalDetalhes').classList.add('active');
+            }
+
+            carregarParaEdicao(solicitacao) {
+                // Preencher formulário
+                document.getElementById('data').value = solicitacao.data;
+                document.querySelector(`input[name="local"][value="${solicitacao.local}"]`).checked = true;
+                document.getElementById('localizacao').value = solicitacao.localizacao || '';
+                document.getElementById('patrimonio').value = solicitacao.patrimonio || '';
+                document.getElementById('descricao').value = solicitacao.descricao;
+                document.getElementById('solicitante').value = solicitacao.solicitante;
+                
+                if (solicitacao.foto) {
+                    document.getElementById('fotoPreview').src = solicitacao.foto;
+                    document.getElementById('fotoPreview').style.display = 'block';
+                }
+                
+                // Remover da lista (será readicionada ao salvar)
+                const index = this.sistema.solicitacoes.findIndex(s => s.id === solicitacao.id);
+                if (index !== -1) {
+                    this.sistema.solicitacoes.splice(index, 1);
+                }
+                
+                // Navegar para o formulário
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                document.querySelector('[data-section="novaSolicitacao"]').classList.add('active');
+                document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+                document.getElementById('novaSolicitacao').classList.add('active');
+                
+                window.scrollTo(0, 0);
+                this.sistema.mostrarNotificacao('Edite os dados e clique em salvar', 'info');
+            }
+
+            enviarWhatsApp(solicitacao) {
+                const mensagem = `*SOLICITAÇÃO DE MANUTENÇÃO ESCOLAR*
+
+*Data:* ${new Date(solicitacao.data).toLocaleDateString('pt-BR')}
+*Local:* ${solicitacao.local} ${solicitacao.localizacao ? `- ${solicitacao.localizacao}` : ''}
+${solicitacao.patrimonio ? `*Patrimônio:* ${solicitacao.patrimonio}\n` : ''}
+*Descrição:*
+${solicitacao.descricao}
+
+*Solicitante:* ${solicitacao.solicitante}
+*Status:* ${solicitacao.status.charAt(0).toUpperCase() + solicitacao.status.slice(1)}
+
+_Por favor, dê a devida atenção a esta solicitação._`;
+
+                const mensagemCodificada = encodeURIComponent(mensagem);
+                window.open(`https://wa.me/?text=${mensagemCodificada}`, '_blank');
+            }
+
+            atualizarListaSolicitacoes() {
+                const lista = document.getElementById('listaSolicitacoes');
+                const contador = document.getElementById('contadorSolicitacoes');
+                
+                if (this.sistema.solicitacoes.length === 0) {
+                    lista.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-inbox"></i>
+                            </div>
+                            <p class="empty-text">Nenhuma solicitação encontrada</p>
+                            <p class="empty-text" style="font-size: 0.9rem; margin-top: 10px;">Crie sua primeira solicitação</p>
+                        </div>
+                    `;
+                    contador.textContent = '0 solicitações';
+                    return;
+                }
+
+                let html = '';
+                this.sistema.solicitacoes.forEach(solicitacao => {
+                    const statusClass = `status-${solicitacao.status}`;
+                    const dataFormatada = new Date(solicitacao.data).toLocaleDateString('pt-BR');
+                    const descricaoResumida = solicitacao.descricao.length > 100 
+                        ? solicitacao.descricao.substring(0, 100) + '...' 
+                        : solicitacao.descricao;
+                    
+                    html += `
+                        <div class="request-card" data-id="${solicitacao.id}">
+                            <div class="request-header">
+                                <div class="request-title">
+                                    ${solicitacao.local} ${solicitacao.localizacao ? `- ${solicitacao.localizacao}` : ''}
+                                    <span class="status-badge ${statusClass}">
+                                        ${solicitacao.status.charAt(0).toUpperCase() + solicitacao.status.slice(1)}
+                                    </span>
+                                </div>
+                                <div class="request-date">${dataFormatada}</div>
+                            </div>
+                            <div class="request-info">
+                                <p class="request-desc">${descricaoResumida}</p>
+                                ${solicitacao.patrimonio ? `
+                                    <div class="request-patrimony">
+                                        <i class="fas fa-hashtag"></i> ${solicitacao.patrimonio}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="request-footer">
+                                <div class="request-author">Por: ${solicitacao.solicitante}</div>
+                                ${solicitacao.foto ? `
+                                    <div class="request-photo-badge">
+                                        <i class="fas fa-camera"></i> Com foto
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                lista.innerHTML = html;
+                contador.textContent = `${this.sistema.solicitacoes.length} solicitações`;
+
+                // Adicionar eventos de clique às solicitações
+                document.querySelectorAll('.request-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const id = parseInt(card.getAttribute('data-id'));
+                        const solicitacao = this.sistema.solicitacoes.find(s => s.id === id);
+                        if (solicitacao) {
+                            this.mostrarDetalhesSolicitacao(solicitacao);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Iniciar aplicação quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', () => {
+            new AplicacaoManutencao();
+        });
+    </script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => console.log("PWA Ativo!"))
+    .catch((err) => console.log("Erro no PWA:", err));
+}
+</body>
+</html>
